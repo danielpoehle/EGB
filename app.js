@@ -124,23 +124,40 @@
     function EgbService(){
         let service = this;
         
-        service.createPin = function(egb){
+        service.createPin = function(lat, lon, egb){
             //53.5136232,8.0525981(<h6>Mariensiel</h6>)
-            let pin = egb.lat + ',' + egb.lon + '(<h6>' + egb.NameVon.replaceAll(')', "\\)") + ' <i class="fas fa-arrow-alt-circle-right"></i> ' + egb.NameBis.replaceAll(')', "\\)") + '</h6>';           
+            let pin = lat + ',' + lon + '(<h6>' + egb.NameVon.replaceAll(')', "\\)") + ' <i class="fas fa-arrow-alt-circle-right"></i> ' + egb.NameBis.replaceAll(')', "\\)") + '</h6>';           
             pin += '<p id="add" value=' + egb.LfdNr + '><b>BR ' + egb.TFZ + '<br>FD-Grenzlast: ' + egb.FD_Grenzlast + ' t</b></p>';             
             pin += '<ul><li>DS100: ' + egb.RL100von + ' <i class="fas fa-arrow-alt-circle-right"></i> ' + egb.RL100bis + '</li><li>Strecke: ' + egb.StrNr + '</li><li>Regelgrenzlast: ' + egb.Grenzlast + ' t</li>';
-            pin += '<li>Signal ' + egb["Freie Signale"].replaceAll(')', "\\)") + '</li></ul> )';            
+            pin += '<li>Signal ' + egb["Freie Signale"].replaceAll(')', "\\)") + '</li></ul>) ';            
             return pin;
         };
 
         service.generateMapString = function(tfz, egbList, regionen){            
             const filteredEgbList = egbList.filter((b) => regionen.includes(b.NL) && b.TFZ === tfz);
             //console.log(filteredEgbList.length);
-            //console.log(filteredEgbList[0]);
+            //console.log(filteredEgbList);            
+            let allStations = filteredEgbList.map((f) => f.RL100von);
+            allStations = allStations.filter((item, index) => allStations.indexOf(item)===index);
+            //console.log(allStations);
             let pinString = '[map] ';
-            filteredEgbList.forEach((b, i) => {
-                pinString += service.createPin(b);
-            });
+
+            for (let n = 0; n < allStations.length; n += 1) {
+                const egbBf = filteredEgbList.filter((f) => f.RL100von === allStations[n]);                
+                if(egbBf.length === 1){
+                    //console.log('1 Bf ' + egbBf[0].RL100von);
+                    pinString += service.createPin(egbBf[0].lat, egbBf[0].lon, egbBf[0]);
+                }else{
+                    const alphaStp = 2 * Math.PI / egbBf.length;
+                    let radius = 0.0002;
+                    if(egbBf.length > 4){radius = 0.0003;}
+                    for (let j = 0; j < egbBf.length; j += 1) {
+                        pinString += service.createPin(parseFloat(egbBf[j].lat) + radius * Math.sin(j*alphaStp), 
+                                                       parseFloat(egbBf[j].lon) + radius * Math.cos(j*alphaStp), 
+                                                       egbBf[j]);                        
+                    }
+                }                
+            };
             //console.log(pinString);
             pinString += ' [/map]';
             return pinString;
