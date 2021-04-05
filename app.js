@@ -147,7 +147,7 @@
                 if(egbBf.length === 1){
                     //console.log('1 Bf ' + egbBf[0].RL100von);
                     pinString += service.createPin(egbBf[0].lat, egbBf[0].lon, egbBf[0]);
-                }else{
+                }else{                    
                     const alphaStp = 2 * Math.PI / egbBf.length;
                     let radius = 0.0002;
                     if(egbBf.length > 4){radius = 0.0003;}
