@@ -11,7 +11,9 @@
         
         egbList.Filename = '';
         egbList.tfzbr = [];
-        egbList.selectedBr = 'Tfz-Baureihe auswählen';
+        egbList.zughaken = "450kN";
+        egbList.haken = ["450kN", "500kN", "850kN"];
+        egbList.selectedBr = '';
         egbList.loadComplete = false;
         egbList.mapString = '';
         egbList.nord = false;
@@ -25,6 +27,9 @@
         egbList.showSelEgbTable = false;
         egbList.minRegelGrenzlast = 0;
         egbList.minFDGrenzlast = 0;
+        egbList.min450 = 0;
+        egbList.min500 = 0;
+        egbList.min850 = 0;
         
         $(document).ready(function () {
             $('#list').bind('change', handleDialog);
@@ -59,6 +64,9 @@
                 egbList.showSelEgbTable = true;
                 egbList.minRegelGrenzlast = Math.min.apply(null, egbList.selectedEgb.map((s) => s.Grenzlast));
                 egbList.minFDGrenzlast = Math.min.apply(null, egbList.selectedEgb.map((s) => s.FD_Grenzlast));
+                egbList.min450 = Math.min.apply(null, egbList.selectedEgb.map((s) => s['Zughakengrenzlast 450kN']));
+                egbList.min500 = Math.min.apply(null, egbList.selectedEgb.map((s) => s['Zughakengrenzlast 500kN']));
+                egbList.min850 = Math.min.apply(null, egbList.selectedEgb.map((s) => s['Zughakengrenzlast 850kN']));
                 for (let k = 0; k < egbList.selectedEgb.length; k++) {
                     if(egbList.selectedEgb[k].Grenzlast >= egbList.minFDGrenzlast){
                         egbList.selectedEgb[k].wirksam = "nein";
@@ -77,6 +85,9 @@
                 egbList.showSelEgbTable = true;
                 egbList.minRegelGrenzlast = Math.min.apply(null, egbList.selectedEgb.map((s) => s.Grenzlast));
                 egbList.minFDGrenzlast = Math.min.apply(null, egbList.selectedEgb.map((s) => s.FD_Grenzlast));
+                egbList.min450 = Math.min.apply(null, egbList.selectedEgb.map((s) => s['Zughakengrenzlast 450kN']));
+                egbList.min500 = Math.min.apply(null, egbList.selectedEgb.map((s) => s['Zughakengrenzlast 500kN']));
+                egbList.min850 = Math.min.apply(null, egbList.selectedEgb.map((s) => s['Zughakengrenzlast 850kN']));
                 for (let k = 0; k < egbList.selectedEgb.length; k++) {
                     if(egbList.selectedEgb[k].Grenzlast >= egbList.minFDGrenzlast){
                         egbList.selectedEgb[k].wirksam = "nein";
