@@ -1,5 +1,5 @@
 (function () {
-    'use strict'; //browser does complain about bad coding
+    'use strict'; 
 
     angular.module('EGB', [])
     .controller('EgbController', EgbController)
@@ -30,10 +30,40 @@
         egbList.min450 = 0;
         egbList.min500 = 0;
         egbList.min850 = 0;
+        egbList.minResultGrenzlast = 0;
         
         $(document).ready(function () {
             $('#list').bind('change', handleDialog);
+            $('#Haken').bind('change', updateGrenzlast);
         });
+
+        function updateGrenzlast(){            
+            if(egbList.selectedEgb.length > 0){
+                egbList.minRegelGrenzlast = Math.min.apply(null, egbList.selectedEgb.map((s) => s.Grenzlast));
+                egbList.minFDGrenzlast = Math.min.apply(null, egbList.selectedEgb.map((s) => s.FD_Grenzlast));
+                egbList.min450 = Math.min.apply(null, egbList.selectedEgb.map((s) => s['Zughakengrenzlast 450kN']));
+                egbList.min500 = Math.min.apply(null, egbList.selectedEgb.map((s) => s['Zughakengrenzlast 500kN']));
+                egbList.min850 = Math.min.apply(null, egbList.selectedEgb.map((s) => s['Zughakengrenzlast 850kN']));
+                if(egbList.zughaken == '450kN'){
+                    egbList.minResultGrenzlast = Math.min(egbList.minFDGrenzlast, egbList.min450);
+                }
+                if(egbList.zughaken == '500kN'){
+                    egbList.minResultGrenzlast = Math.min(egbList.minFDGrenzlast, egbList.min500);
+                }
+                if(egbList.zughaken == '850kN'){
+                    egbList.minResultGrenzlast = Math.min(egbList.minFDGrenzlast, egbList.min850);
+                }
+                //console.log(egbList.minFDGrenzlast + " " + egbList.min450 + " " + egbList.minResultGrenzlast);
+                for (let k = 0; k < egbList.selectedEgb.length; k++) {
+                    if(egbList.selectedEgb[k].Grenzlast >= egbList.minResultGrenzlast){
+                        egbList.selectedEgb[k].wirksam = "nein";
+                    }else{
+                        egbList.selectedEgb[k].wirksam = "ja";
+                    }                    
+                }
+            }
+            
+        }
         
         function handleDialog(event) {
             const { files } = event.target;
@@ -62,18 +92,7 @@
             } 
             if(egbList.selectedEgb.length > 0){
                 egbList.showSelEgbTable = true;
-                egbList.minRegelGrenzlast = Math.min.apply(null, egbList.selectedEgb.map((s) => s.Grenzlast));
-                egbList.minFDGrenzlast = Math.min.apply(null, egbList.selectedEgb.map((s) => s.FD_Grenzlast));
-                egbList.min450 = Math.min.apply(null, egbList.selectedEgb.map((s) => s['Zughakengrenzlast 450kN']));
-                egbList.min500 = Math.min.apply(null, egbList.selectedEgb.map((s) => s['Zughakengrenzlast 500kN']));
-                egbList.min850 = Math.min.apply(null, egbList.selectedEgb.map((s) => s['Zughakengrenzlast 850kN']));
-                for (let k = 0; k < egbList.selectedEgb.length; k++) {
-                    if(egbList.selectedEgb[k].Grenzlast >= egbList.minFDGrenzlast){
-                        egbList.selectedEgb[k].wirksam = "nein";
-                    }else{
-                        egbList.selectedEgb[k].wirksam = "ja";
-                    }                    
-                }
+                updateGrenzlast();
             }                    
             //console.log(egbList.selectedEgb);
         };
@@ -83,18 +102,7 @@
             egbList.selectedEgb.splice(ind, 1);
             if(egbList.selectedEgb.length > 0){
                 egbList.showSelEgbTable = true;
-                egbList.minRegelGrenzlast = Math.min.apply(null, egbList.selectedEgb.map((s) => s.Grenzlast));
-                egbList.minFDGrenzlast = Math.min.apply(null, egbList.selectedEgb.map((s) => s.FD_Grenzlast));
-                egbList.min450 = Math.min.apply(null, egbList.selectedEgb.map((s) => s['Zughakengrenzlast 450kN']));
-                egbList.min500 = Math.min.apply(null, egbList.selectedEgb.map((s) => s['Zughakengrenzlast 500kN']));
-                egbList.min850 = Math.min.apply(null, egbList.selectedEgb.map((s) => s['Zughakengrenzlast 850kN']));
-                for (let k = 0; k < egbList.selectedEgb.length; k++) {
-                    if(egbList.selectedEgb[k].Grenzlast >= egbList.minFDGrenzlast){
-                        egbList.selectedEgb[k].wirksam = "nein";
-                    }else{
-                        egbList.selectedEgb[k].wirksam = "ja";
-                    }                    
-                }
+                updateGrenzlast();
             }else{
                 egbList.showSelEgbTable = false;
                 egbList.minRegelGrenzlast = 0;

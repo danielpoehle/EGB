@@ -222,7 +222,15 @@
             <hr>
             <div class="col-md-12">
               <p>Ohne freie Durchfahrt darf das Wagenzuggewicht {{egbList.minRegelGrenzlast}}t nicht überschreiten.</p>
-              Das Wagenzuggewicht darf maximal {{egbList.minFDGrenzlast}}t betragen, wenn folgende freie Durchfahrten geplant werden
+              <p>Maßgebend für das maximale Wagenzuggewicht ist die 
+              <span class="text-danger fw-bold" ng-show="egbList.zughaken==='450kN' && egbList.min450 < egbList.minFDGrenzlast">Zughakengrenzlast 450 kN von {{egbList.min450}}t,</span>
+              <span class="text-danger fw-bold" ng-show="egbList.zughaken==='500kN' && egbList.min500 < egbList.minFDGrenzlast">Zughakengrenzlast 500 kN von {{egbList.min500}}t,</span>
+              <span class="text-danger fw-bold" ng-show="egbList.zughaken==='850kN' && egbList.min850 < egbList.minFDGrenzlast">Zughakengrenzlast 850 kN von {{egbList.min850}}t,</span>
+              <span class="text-danger fw-bold" ng-show="egbList.zughaken==='450kN' && egbList.min450 >= egbList.minFDGrenzlast">FD-Grenzlast von {{egbList.minFDGrenzlast}}t,</span>
+              <span class="text-danger fw-bold" ng-show="egbList.zughaken==='500kN' && egbList.min500 >= egbList.minFDGrenzlast">FD-Grenzlast von {{egbList.minFDGrenzlast}}t,</span>
+              <span class="text-danger fw-bold" ng-show="egbList.zughaken==='850kN' && egbList.min850 >= egbList.minFDGrenzlast">FD-Grenzlast von {{egbList.minFDGrenzlast}}t,</span>
+              wenn folgende freie Durchfahrten geplant werden
+            </p>               
               <table class="table table-hover table-sm text-center">
                 <thead>
                   <tr>
@@ -231,12 +239,7 @@
                     <th>von</th>
                     <th>bis</th>
                     <th>Regelgrenzlast [t]</th>
-                    <th>
-                      <span ng-show="egbList.zughaken==='450kN'">Zughakengrenzlast 450kN [t]</span>
-                      <span ng-show="egbList.zughaken==='500kN'">Zughakengrenzlast 500kN [t]</span>
-                      <span ng-show="egbList.zughaken==='850kN'">Zughakengrenzlast 850kN [t]</span>
-                    </th>
-                    <th>min. FD-Grenzlast [t]</th>
+                    <th>Min aus Zughakengrenzlast und FD-Grenzlast [t]</th>
                     <th class="text-start">Signal</th>
                   </tr>
                 </thead>
@@ -247,12 +250,7 @@
                     <td>{{e.RL100von}}</td>
                     <td>{{e.RL100bis}}</td>
                     <td>{{e.Grenzlast}}</td>
-                    <td>
-                      <span ng-show="egbList.zughaken==='450kN'" ng-class="{'bg-danger text-light fw-bold': e['Zughakengrenzlast 450kN'] < egbList.minFDGrenzlast}">{{e['Zughakengrenzlast 450kN']}}</span>
-                      <span ng-show="egbList.zughaken==='500kN'" ng-class="{'bg-danger text-light fw-bold': e['Zughakengrenzlast 500kN'] < egbList.minFDGrenzlast}">{{e['Zughakengrenzlast 500kN']}}</span>
-                      <span ng-show="egbList.zughaken==='850kN'" ng-class="{'bg-danger text-light fw-bold': e['Zughakengrenzlast 850kN'] < egbList.minFDGrenzlast}">{{e['Zughakengrenzlast 850kN']}}</span>
-                    </td>
-                    <td>{{egbList.minFDGrenzlast}}</td>
+                    <td>{{egbList.minResultGrenzlast}}</td>
                     <td class="text-start">{{e['Freie Signale']}}</td>
                   </tr>                  
                 </tbody>
